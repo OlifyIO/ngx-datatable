@@ -94,6 +94,8 @@ export class ResizeableDirective implements OnDestroy, AfterViewInit {
     if (overMinWidth && underMaxWidth) {
       this.element.style.width = `${newWidth}px`;
     }
+
+    this.resize.emit(this.element.clientWidth);
   }
 
   private _destroySubscription() {
