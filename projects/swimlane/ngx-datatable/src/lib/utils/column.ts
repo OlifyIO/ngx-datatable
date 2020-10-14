@@ -2,7 +2,7 @@
  * Returns the columns by pin.
  */
 export function columnsByPin(cols: any[]) {
-  const ret: { left: any; center: any; right: any } = {
+  const ret: { left: any[]; center: any[]; right: any[] } = {
     left: [],
     center: [],
     right: []

@@ -140,13 +140,17 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
    * Columns to be displayed.
    */
   @Input() set columns(val: TableColumn[]) {
-    if (val) {
-      this._internalColumns = [...val];
-      setColumnDefaults(this._internalColumns);
-      this.recalculateColumns();
-    }
+    if (val !== this._columns) {
+      if (val) {
+        this._internalColumns = val.map(x => ({
+          ...x
+        }));
+        setColumnDefaults(this._internalColumns);
+        this.recalculateColumns();
+      }
 
-    this._columns = val;
+      this._columns = val;
+    }
   }
 
   /**
@@ -823,8 +827,9 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
     columns: any[] = this._internalColumns,
     forceIdx: number = -1,
     allowBleed: boolean = this.scrollbarH
-  ): any[] | undefined {
-    if (!columns) return undefined;
+  ) {
+    if (!columns) return;
+    columns = [...columns];
 
     let width = this._innerWidth;
     if (this.scrollbarV) {
@@ -837,7 +842,7 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
       adjustColumnWidths(columns, width);
     }
 
-    return columns;
+    this._internalColumns = columns;
   }
 
   /**

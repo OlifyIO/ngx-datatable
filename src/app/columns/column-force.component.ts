@@ -24,7 +24,7 @@ import { ColumnMode } from 'projects/swimlane/ngx-datatable/src/public-api';
         rowHeight="auto"
         [rows]="rows"
       >
-        <ngx-datatable-column name="Name" [width]="100">
+        <ngx-datatable-column name="Name">
           <ng-template let-value="value" ngx-datatable-cell-template>
             {{ value }}
           </ng-template>
