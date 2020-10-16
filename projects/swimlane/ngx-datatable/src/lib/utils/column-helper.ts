@@ -1,8 +1,8 @@
-import { camelCase, deCamelCase } from './camel-case';
-import { id } from './id';
-import { getterForProp } from './column-prop-getters';
-import { TableColumn } from '../types/table-column.type';
 import { DataTableColumnDirective } from '../components/columns/column.directive';
+import { TableColumn } from '../types/table-column.type';
+import { camelCase, deCamelCase } from './camel-case';
+import { getterForProp } from './column-prop-getters';
+import { id } from './id';
 
 /**
  * Sets the column defaults
@@ -82,7 +82,7 @@ export function isNullOrUndefined<T>(value: T | null | undefined): value is null
 /**
  * Translates templates definitions to objects
  */
-export function translateTemplates(templates: DataTableColumnDirective[]): any[] {
+export function translateTemplates(templates: DataTableColumnDirective[]): TableColumn[] {
   const result: any[] = [];
   for (const temp of templates) {
     const col: any = {};

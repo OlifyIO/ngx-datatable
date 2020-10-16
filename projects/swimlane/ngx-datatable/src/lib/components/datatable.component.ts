@@ -137,27 +137,30 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
   @Input() groupedRows: any[];
 
   /**
-   * Columns to be displayed.
+   * Get the column definitions.
+   */
+  get columns(): TableColumn[] {
+    return this._columns;
+  }
+
+  /**
+   * Definitions of columns to be displayed.
    */
   @Input() set columns(val: TableColumn[]) {
     if (val !== this._columns) {
-      if (val) {
-        this._internalColumns = val.map(x => ({
-          ...x
-        }));
-        setColumnDefaults(this._internalColumns);
-        this.recalculateColumns();
-      }
-
       this._columns = val;
+
+      if (val) {
+        this.resetColumnsFromDefinitions(val);
+      }
     }
   }
 
   /**
-   * Get the columns.
+   * Get the current states of the columns.
    */
-  get columns(): TableColumn[] {
-    return this._columns;
+  get columnStates(): TableColumn[] {
+    return this._columnStates;
   }
 
   /**
@@ -451,6 +454,11 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
   @Output() resize: EventEmitter<any> = new EventEmitter();
 
   /**
+   * Column state has changed.
+   */
+  @Output() columnStateChange: EventEmitter<TableColumn[]> = new EventEmitter();
+
+  /**
    * The context menu was invoked on the table.
    * type indicates whether the header or the body was clicked.
    * content contains either the column or the row that was clicked.
@@ -561,8 +569,10 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
    */
   @ContentChildren(DataTableColumnDirective)
   set columnTemplates(val: QueryList<DataTableColumnDirective>) {
-    this._columnTemplates = val;
-    this.translateColumns(val);
+    if (this._columnTemplates !== val) {
+      this._columnTemplates = val;
+      this.translateColumns(val);
+    }
   }
 
   /**
@@ -635,7 +645,7 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
   _rows: any[];
   _groupRowsBy: string;
   _internalRows: any[];
-  _internalColumns: TableColumn[];
+  _columnStates: TableColumn[];
   _columns: TableColumn[];
   _columnTemplates: QueryList<DataTableColumnDirective>;
   _subscriptions: Subscription[] = [];
@@ -732,9 +742,8 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
     if (val) {
       const arr = val.toArray();
       if (arr.length) {
-        this._internalColumns = translateTemplates(arr);
-        setColumnDefaults(this._internalColumns);
-        this.recalculateColumns();
+        const newcolumns = translateTemplates(arr);
+        this.resetColumnsFromDefinitions(newcolumns);
         this.sortInternalRows();
         this.cd.markForCheck();
       }
@@ -823,11 +832,7 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
    * Recalulcates the column widths based on column width
    * distribution mode and scrollbar offsets.
    */
-  recalculateColumns(
-    columns: any[] = this._internalColumns,
-    forceIdx: number = -1,
-    allowBleed: boolean = this.scrollbarH
-  ) {
+  recalculateColumns(columns: any[] = this.columnStates, forceIdx: number = -1, allowBleed: boolean = this.scrollbarH) {
     if (!columns) return;
     columns = [...columns];
 
@@ -842,7 +847,7 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
       adjustColumnWidths(columns, width);
     }
 
-    this._internalColumns = columns;
+    this.setColumnStates(columns);
   }
 
   /**
@@ -993,7 +998,7 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
     }
 
     let idx: number;
-    const cols = this._internalColumns.map((c, i) => {
+    const cols = this.columnStates.map((c, i) => {
       c = { ...c };
 
       if (c.$$id === column.$$id) {
@@ -1009,7 +1014,7 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
     });
 
     this.recalculateColumns(cols, idx);
-    this._internalColumns = cols;
+    this.setColumnStates(cols);
 
     this.resize.emit({
       column,
@@ -1021,7 +1026,7 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
    * The header triggered a column re-order event.
    */
   onColumnReorder({ column, newValue, prevValue }: any): void {
-    const cols = this._internalColumns.map(c => {
+    const cols = this.columnStates.map(c => {
       return { ...c };
     });
 
@@ -1045,7 +1050,7 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
       }
     }
 
-    this._internalColumns = cols;
+    this.setColumnStates(cols);
 
     this.reorder.emit({
       column,
@@ -1141,6 +1146,67 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
   ngOnDestroy() {
     this._subscriptions.forEach(subscription => subscription.unsubscribe());
   }
+  /**
+   * Restores the original state of the columns as set by columnTemplates
+   * or the columns property.
+   */
+  resetOriginalColumnStates() {
+    if (this.columnTemplates?.length > 0) {
+      this.translateColumns(this.columnTemplates);
+    } else {
+      this.resetColumnsFromDefinitions(this.columns);
+    }
+  }
+
+  /**
+   * Restores the state of the columns.
+   */
+  restoreColumnStates(columnStates: Partial<TableColumn>[] = []) {
+    // we want to preserve the order of passed columnStates
+    const newColumnStates = columnStates
+      .map(columnState => {
+        const oldState = this.columnStates.find(old => old.name === columnState.name);
+        if (!oldState) {
+          return null;
+        }
+
+        const newColumnState = { ...oldState };
+        for (const prop in columnState) {
+          if (newColumnState.hasOwnProperty(prop)) {
+            newColumnState[prop] = columnState[prop];
+          }
+        }
+
+        return newColumnState;
+      })
+      .filter(x => !!x);
+
+    const missingColumns = this.columnStates
+      .map((c, i) => ({ c, i }))
+      .filter(x => !newColumnStates.some(y => y.name === x.c.name));
+    for (const missingColumn of missingColumns) {
+      newColumnStates.splice(missingColumn.i, 0, missingColumn.c);
+    }
+
+    this.setColumnStates(newColumnStates);
+  }
+
+  setColumnState(columnState: Partial<TableColumn>) {
+    const newColumnStates = this.columnStates.map(c => {
+      if (c.name === columnState.name) {
+        const newColumnState = { ...c };
+        for (const prop in columnState) {
+          if (columnState.hasOwnProperty(prop)) {
+            newColumnState[prop] = columnState[prop];
+          }
+        }
+        return newColumnState;
+      }
+
+      return c;
+    });
+    this.setColumnStates(newColumnStates);
+  }
 
   /**
    * listen for changes to input bindings of all DataTableColumnDirective and
@@ -1156,7 +1222,23 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
     );
   }
 
+  private setColumnStates(val: TableColumn[]) {
+    if (this._columnStates !== val) {
+      this._columnStates = val;
+      this.columnStateChange.emit(val);
+    }
+  }
+
   private sortInternalRows(): void {
-    this._internalRows = sortRows(this._internalRows, this._internalColumns, this.sorts);
+    this._internalRows = sortRows(this._internalRows, this.columnStates, this.sorts);
+  }
+
+  private resetColumnsFromDefinitions(columns: TableColumn[]) {
+    const newColumnState = columns.map(x => ({
+      ...x
+    }));
+    setColumnDefaults(newColumnState);
+    this.setColumnStates(newColumnState);
+    this.recalculateColumns();
   }
 }
