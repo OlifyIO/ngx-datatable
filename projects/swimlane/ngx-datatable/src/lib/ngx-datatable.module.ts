@@ -7,6 +7,7 @@ import { DataTableFooterTemplateDirective } from './components/footer/footer-tem
 import { VisibilityDirective } from './directives/visibility.directive';
 import { DraggableDirective } from './directives/draggable.directive';
 import { ResizeableDirective } from './directives/resizeable.directive';
+import { ResizeObserverDirective } from './directives/resize-observer.directive';
 import { OrderableDirective } from './directives/orderable.directive';
 import { LongPressDirective } from './directives/long-press.directive';
 import { ScrollerComponent } from './components/body/scroller.component';
@@ -40,6 +41,7 @@ import { DataTableSummaryRowComponent } from './components/body/summary/summary-
     VisibilityDirective,
     DraggableDirective,
     ResizeableDirective,
+    ResizeObserverDirective,
     OrderableDirective,
     LongPressDirective,
     ScrollerComponent,

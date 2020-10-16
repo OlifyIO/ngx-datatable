@@ -1,4 +1,10 @@
-<div visibilityObserver (visible)="recalculate()">
+<div
+  visibilityObserver
+  resizeObserver
+  [resizeObserverEnabled]="true"
+  (visible)="recalculate()"
+  (resize)="onResize($event)"
+>
   <datatable-header
     *ngIf="headerHeight"
     [sorts]="sorts"

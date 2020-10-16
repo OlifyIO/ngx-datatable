@@ -5,7 +5,6 @@ import {
   ElementRef,
   EventEmitter,
   ViewChild,
-  HostListener,
   ContentChildren,
   OnInit,
   QueryList,
@@ -45,6 +44,7 @@ import { DimensionsHelper } from '../services/dimensions-helper.service';
 import { throttleable } from '../utils/throttle';
 import { forceFillColumnWidths, adjustColumnWidths } from '../utils/math';
 import { sortRows } from '../utils/sort';
+import { ResizeObserverEntry } from '@juggle/resize-observer';
 
 @Component({
   selector: 'ngx-datatable',
@@ -820,15 +820,6 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
   }
 
   /**
-   * Window resize handler to update sizes.
-   */
-  @HostListener('window:resize')
-  @throttleable(5)
-  onWindowResize(): void {
-    this.recalculate();
-  }
-
-  /**
    * Recalulcates the column widths based on column width
    * distribution mode and scrollbar offsets.
    */
@@ -1141,6 +1132,11 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
     // TODO: For duplicated items this will not work
     const rowIndex = this._rows.findIndex(r => r[this.treeToRelation] === event.row[this.treeToRelation]);
     this.treeAction.emit({ row, rowIndex });
+  }
+
+  @throttleable(5)
+  onResize(_event: ResizeObserverEntry) {
+    this.recalculate();
   }
 
   ngOnDestroy() {
