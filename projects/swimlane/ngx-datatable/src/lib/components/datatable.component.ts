@@ -19,7 +19,8 @@ import {
   ChangeDetectorRef,
   SkipSelf,
   Optional,
-  Inject
+  Inject,
+  OnChanges
 } from '@angular/core';
 
 import { DatatableGroupHeaderDirective } from './body/body-group-header.directive';
@@ -56,7 +57,7 @@ import { ResizeObserverEntry } from '@juggle/resize-observer';
     class: 'ngx-datatable'
   }
 })
-export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
+export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterViewInit {
   /**
    * Template for the target marker of drag target columns.
    */
@@ -66,33 +67,33 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
    * Rows that are displayed in the table.
    */
   @Input() set rows(val: any) {
-    this._rows = val;
+    if (this._rows !== val) {
+      this._rows = val;
 
-    if (val) {
-      this._internalRows = [...val];
+      if (val) {
+        this._internalRows = [...val];
+      }
+
+      // auto sort on new updates
+      if (!this.externalSorting) {
+        this.sortInternalRows();
+      }
+
+      // auto group by parent on new update
+      this._internalRows = groupRowsByParents(
+        this._internalRows,
+        optionalGetterForProp(this.treeFromRelation),
+        optionalGetterForProp(this.treeToRelation)
+      );
+
+      // recalculate sizes/etc
+      this._isRecalculatePending = true;
+
+      if (this._rows && this._groupRowsBy) {
+        // If a column has been specified in _groupRowsBy created a new array with the data grouped by that row
+        this.groupedRows = this.groupArrayBy(this._rows, this._groupRowsBy);
+      }
     }
-
-    // auto sort on new updates
-    if (!this.externalSorting) {
-      this.sortInternalRows();
-    }
-
-    // auto group by parent on new update
-    this._internalRows = groupRowsByParents(
-      this._internalRows,
-      optionalGetterForProp(this.treeFromRelation),
-      optionalGetterForProp(this.treeToRelation)
-    );
-
-    // recalculate sizes/etc
-    this.recalculate();
-
-    if (this._rows && this._groupRowsBy) {
-      // If a column has been specified in _groupRowsBy created a new array with the data grouped by that row
-      this.groupedRows = this.groupArrayBy(this._rows, this._groupRowsBy);
-    }
-
-    this.cd.markForCheck();
   }
 
   /**
@@ -180,17 +181,35 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
    */
   @Input() scrollbarH: boolean = false;
 
+  get rowHeight(): number | 'auto' | ((row?: any) => number) {
+    return this._rowHeight;
+  }
+
   /**
    * The row height; which is necessary
    * to calculate the height for the lazy rendering.
    */
-  @Input() rowHeight: number | 'auto' | ((row?: any) => number) = 30;
+  @Input() set rowHeight(value: number | 'auto' | ((row?: any) => number)) {
+    if (this.rowHeight !== value) {
+      this._rowHeight = value;
+      this._isRecalculatePending = true;
+    }
+  }
+
+  get columnMode(): ColumnMode | keyof typeof ColumnMode {
+    return this._columnMode;
+  }
 
   /**
    * Type of column width distribution formula.
    * Example: flex, force, standard
    */
-  @Input() columnMode: ColumnMode | keyof typeof ColumnMode = ColumnMode.standard;
+  @Input() set columnMode(value: ColumnMode | keyof typeof ColumnMode) {
+    if (this.columnMode !== value) {
+      this._columnMode = value;
+      this._isRecalculatePending = true;
+    }
+  }
 
   /**
    * The minimum header height in pixels.
@@ -221,10 +240,10 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
    * Default value: `undefined`
    */
   @Input() set limit(val: number | undefined) {
-    this._limit = val;
-
-    // recalculate sizes/etc
-    this.recalculate();
+    if (this._limit !== val) {
+      this._limit = val;
+      this._isRecalculatePending = true;
+    }
   }
 
   /**
@@ -239,10 +258,10 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
    * Default value: `0`
    */
   @Input() set count(val: number) {
-    this._count = val;
-
-    // recalculate sizes/etc
-    this.recalculate();
+    if (this._count !== val) {
+      this._count = val;
+      this._isRecalculatePending = true;
+    }
   }
 
   /**
@@ -259,6 +278,7 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
   @Input() set offset(val: number) {
     this._offset = val;
   }
+
   get offset(): number {
     return Math.max(Math.min(this._offset, Math.ceil(this.rowCount / this.pageSize) - 1), 0);
   }
@@ -649,6 +669,9 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
   _columns: TableColumn[];
   _columnTemplates: QueryList<DataTableColumnDirective>;
   _subscriptions: Subscription[] = [];
+  _rowHeight: number | 'auto' | ((row?: any) => number) = 30;
+  _columnMode: ColumnMode | keyof typeof ColumnMode = ColumnMode.standard;
+  _isRecalculatePending = false;
 
   constructor(
     @SkipSelf() private scrollbarHelper: ScrollbarHelper,
@@ -678,6 +701,13 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit {
     // if the table is hidden the visibility
     // listener will invoke this itself upon show
     this.recalculate();
+  }
+
+  ngOnChanges() {
+    if (this._isRecalculatePending) {
+      this._isRecalculatePending = false;
+      this.recalculate();
+    }
   }
 
   /**
