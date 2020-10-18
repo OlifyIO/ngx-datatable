@@ -1,20 +1,21 @@
 import {
-  Component,
-  Output,
-  EventEmitter,
-  Input,
-  HostBinding,
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
-  ViewChild,
-  OnInit,
+  Component,
+  EventEmitter,
+  HostBinding,
+  Input,
   OnDestroy,
-  ChangeDetectionStrategy
+  OnInit,
+  Output,
+  TemplateRef,
+  ViewChild
 } from '@angular/core';
-import { ScrollerComponent } from './scroller.component';
 import { SelectionType } from '../../types/selection.type';
-import { columnsByPin, columnGroupWidths } from '../../utils/column';
+import { columnGroupWidths, columnsByPin } from '../../utils/column';
 import { RowHeightCache } from '../../utils/row-height-cache';
 import { translateXY } from '../../utils/translate';
+import { ScrollerComponent } from './scroller.component';
 
 @Component({
   selector: 'datatable-body',
@@ -110,7 +111,10 @@ import { translateXY } from '../../utils/translate';
         >
         </datatable-summary-row>
       </datatable-scroller>
-      <div class="empty-row" *ngIf="!rows?.length && !loadingIndicator" [innerHTML]="emptyMessage"></div>
+      <ng-container *ngIf="!rows?.length && !loadingIndicator">
+        <ng-template *ngIf="emptyMessageTemplate" [ngTemplateOutlet]="emptyMessageTemplate"></ng-template>
+        <div *ngIf="!emptyMessageTemplate" class="empty-row" [innerHTML]="emptyMessage"></div>
+      </ng-container>
     </datatable-selection>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -131,6 +135,7 @@ export class DataTableBodyComponent implements OnInit, OnDestroy {
   @Input() rowIdentity: any;
   @Input() rowDetail: any;
   @Input() groupHeader: any;
+  @Input() emptyMessageTemplate: TemplateRef<any>;
   @Input() selectCheck: any;
   @Input() displayCheck: any;
   @Input() trackByProp: string;
@@ -369,6 +374,7 @@ export class DataTableBodyComponent implements OnInit, OnDestroy {
     this.updateIndexes();
     this.updatePage(event.direction);
     this.updateRows();
+    this.cd.detectChanges();
   }
 
   /**
