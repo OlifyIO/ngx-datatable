@@ -6,6 +6,7 @@ Unofficial fork of @swimlane/ngx-datatable with many bugfixes and some extra fea
 - Fixed: correct table recalculation on component resizing (not just window:resize)
 - Fixed: recalculate on Input changes (rowHeight, columnMode, etc.)
 - Fixed: change detection not triggered on body scroll (rows not being rendered when using virtual scroll)
+- Fixed: body's internal offset not reset when scroller gets recreated
 - Improvement: columns now re-render immediately when resizing
 - Improvement: performance optimizations
 - Added: exposed new column state API (saving/restoring, etc.)

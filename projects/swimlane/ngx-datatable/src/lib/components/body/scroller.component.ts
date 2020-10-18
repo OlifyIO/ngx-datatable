@@ -9,7 +9,8 @@ import {
   OnInit,
   OnDestroy,
   HostBinding,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  AfterViewInit
 } from '@angular/core';
 
 import { MouseEvent } from '../../events';
@@ -22,7 +23,7 @@ import { MouseEvent } from '../../events';
   },
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ScrollerComponent implements OnInit, OnDestroy {
+export class ScrollerComponent implements AfterViewInit, OnInit, OnDestroy {
   @Input() scrollbarV: boolean = false;
   @Input() scrollbarH: boolean = false;
 
@@ -46,8 +47,16 @@ export class ScrollerComponent implements OnInit, OnDestroy {
 
   private _scrollEventListener: any = null;
 
-  constructor(private ngZone: NgZone, element: ElementRef, private renderer: Renderer2) {
+  constructor(element: ElementRef, private renderer: Renderer2) {
     this.element = element.nativeElement;
+  }
+
+  ngAfterViewInit() {
+    this.scroll.emit({
+      direction: null,
+      scrollYPos: this.scrollYPos,
+      scrollXPos: this.scrollXPos
+    });
   }
 
   ngOnInit(): void {
