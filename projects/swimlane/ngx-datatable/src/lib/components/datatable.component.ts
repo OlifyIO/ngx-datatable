@@ -1,51 +1,51 @@
 import {
-  Component,
-  Input,
-  Output,
-  ElementRef,
-  EventEmitter,
-  ViewChild,
-  ContentChildren,
-  OnInit,
-  QueryList,
   AfterViewInit,
-  HostBinding,
-  ContentChild,
-  DoCheck,
-  KeyValueDiffers,
-  KeyValueDiffer,
-  ViewEncapsulation,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  SkipSelf,
-  Optional,
+  Component,
+  ContentChild,
+  ContentChildren,
+  DoCheck,
+  ElementRef,
+  EventEmitter,
+  HostBinding,
   Inject,
-  OnChanges
+  Input,
+  KeyValueDiffer,
+  KeyValueDiffers,
+  OnChanges,
+  OnInit,
+  Optional,
+  Output,
+  QueryList,
+  SkipSelf,
+  TemplateRef,
+  ViewChild,
+  ViewEncapsulation
 } from '@angular/core';
-
-import { DatatableGroupHeaderDirective } from './body/body-group-header.directive';
-
+import { ResizeObserverEntry } from '@juggle/resize-observer';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { INgxDatatableConfig } from '../ngx-datatable.module';
-import { groupRowsByParents, optionalGetterForProp } from '../utils/tree';
-import { TableColumn } from '../types/table-column.type';
-import { setColumnDefaults, translateTemplates } from '../utils/column-helper';
-import { ColumnMode } from '../types/column-mode.type';
-import { SelectionType } from '../types/selection.type';
-import { SortType } from '../types/sort.type';
-import { ContextmenuType } from '../types/contextmenu.type';
-import { DataTableColumnDirective } from './columns/column.directive';
-import { DatatableRowDetailDirective } from './row-detail/row-detail.directive';
-import { DatatableFooterDirective } from './footer/footer.directive';
-import { DataTableBodyComponent } from './body/body.component';
-import { DataTableHeaderComponent } from './header/header.component';
-import { ScrollbarHelper } from '../services/scrollbar-helper.service';
 import { ColumnChangesService } from '../services/column-changes.service';
 import { DimensionsHelper } from '../services/dimensions-helper.service';
-import { throttleable } from '../utils/throttle';
-import { forceFillColumnWidths, adjustColumnWidths } from '../utils/math';
+import { ScrollbarHelper } from '../services/scrollbar-helper.service';
+import { ColumnMode } from '../types/column-mode.type';
+import { ContextmenuType } from '../types/contextmenu.type';
+import { SelectionType } from '../types/selection.type';
+import { SortType } from '../types/sort.type';
+import { TableColumn } from '../types/table-column.type';
+import { setColumnDefaults, translateTemplates } from '../utils/column-helper';
+import { adjustColumnWidths, forceFillColumnWidths } from '../utils/math';
 import { sortRows } from '../utils/sort';
-import { ResizeObserverEntry } from '@juggle/resize-observer';
+import { throttleable } from '../utils/throttle';
+import { groupRowsByParents, optionalGetterForProp } from '../utils/tree';
+import { DatatableGroupHeaderDirective } from './body/body-group-header.directive';
+import { DataTableBodyComponent } from './body/body.component';
+import { DatatableEmptyMessageTemplateDirective } from './body/empty-message-template.directive';
+import { DataTableColumnDirective } from './columns/column.directive';
+import { DatatableFooterDirective } from './footer/footer.directive';
+import { DataTableHeaderComponent } from './header/header.component';
+import { DatatableRowDetailDirective } from './row-detail/row-detail.directive';
 
 @Component({
   selector: 'ngx-datatable',
@@ -619,6 +619,12 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
    */
   @ContentChild(DatatableFooterDirective)
   footer: DatatableFooterDirective;
+
+  /**
+   * Empty message template.
+   */
+  @ContentChild(DatatableEmptyMessageTemplateDirective, { read: TemplateRef })
+  emptyMessageTemplate: TemplateRef<any>;
 
   /**
    * Reference to the body component for manually
