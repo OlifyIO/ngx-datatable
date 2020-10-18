@@ -1,16 +1,16 @@
 # @olifyio/ngx-datatable
 
-Unofficial fork of @swimlane/ngx-datatable with many bugfixes and some extra features.
+Unofficial fork of @swimlane/ngx-datatable with bugfixes and some extra features.
 
-- Fixed: multiple bugs in column resizing behavior
-- Fixed: correct table recalculation on component resizing (not just window:resize)
-- Fixed: recalculate on Input changes (rowHeight, columnMode, etc.)
-- Fixed: change detection not triggered on body scroll (rows not being rendered when using virtual scroll)
-- Fixed: body's internal offset not reset when scroller gets recreated
+- Feature: exposed new column state API (saving/restoring, etc.)
+- Feature: custom template for empty data message
+- Fix: multiple bugs in column resizing behavior
+- Fix: correct table recalculation on component resizing (not just window:resize)
+- Fix: recalculate on Input changes (rowHeight, columnMode, etc.)
+- Fix: change detection not triggered on body scroll (rows not being rendered when using virtual scroll)
+- Fix: body's internal offset not reset when scroller gets recreated
 - Improvement: columns now re-render immediately when resizing
 - Improvement: performance optimizations
-- Added: exposed new column state API (saving/restoring, etc.)
-- Added: custom template for empty data message
 
 [![Join the chat at https://gitter.im/swimlane/ngx-datatable](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/swimlane/ngx-datatable?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Code Climate](https://codeclimate.com/github/swimlane/ngx-datatable/badges/gpa.svg)](https://codeclimate.com/github/swimlane/ngx-datatable)

@@ -1,7 +1,7 @@
 {
   "name": "@olifyio/ngx-datatable",
-  "version": "18.0.0",
-  "description": "ngx-datatable is an Angular table grid component for presenting large and complex data.",
+  "version": "19.0.0",
+  "description": "Fork of ngx-datatable - an Angular table grid component for presenting large and complex data.",
   "peerDependencies": {
     "@angular/common": "^10.0.0",
     "@angular/core": "^10.0.0",
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/swimlane/ngx-datatable.git"
+    "url": "git+https://github.com/olifyio/ngx-datatable.git"
   },
   "keywords": [
     "angularjs",
@@ -25,10 +25,10 @@
     "grid",
     "table"
   ],
-  "author": "Swimlane",
+  "author": "Olify IO",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/swimlane/ngx-datatable/issues"
+    "url": "https://github.com/olifyio/ngx-datatable/issues"
   },
-  "homepage": "https://github.com/swimlane/ngx-datatable#readme"
+  "homepage": "https://github.com/olifyio/ngx-datatable"
 }

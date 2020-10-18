@@ -1,5 +1,19 @@
 # Changelog
 
+## 19.0.0
+
+Unofficial fork of @swimlane/ngx-datatable with bugfixes and some extra features.
+
+- Feature: exposed new column state API (saving/restoring, etc.)
+- Feature: custom template for empty data message
+- Fix: multiple bugs in column resizing behavior
+- Fix: correct table recalculation on component resizing (not just window:resize)
+- Fix: recalculate on Input changes (rowHeight, columnMode, etc.)
+- Fix: change detection not triggered on body scroll (rows not being rendered when using virtual scroll)
+- Fix: body's internal offset not reset when scroller gets recreated
+- Improvement: columns now re-render immediately when resizing
+- Improvement: performance optimizations
+
 ## 18.0.0
 
 - Breaking: Update to angular 10
