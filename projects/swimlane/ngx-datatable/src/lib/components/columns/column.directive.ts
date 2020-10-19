@@ -29,6 +29,7 @@ export class DataTableColumnDirective implements OnChanges {
   @Input() treeLevelIndent: number;
   @Input() summaryFunc: (cells: any[]) => any;
   @Input() summaryTemplate: TemplateRef<any>;
+  @Input() visible: boolean;
 
   @Input('cellTemplate')
   _cellTemplateInput: TemplateRef<any>;

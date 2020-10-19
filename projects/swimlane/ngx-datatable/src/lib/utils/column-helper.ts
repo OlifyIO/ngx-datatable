@@ -76,6 +76,10 @@ export function setColumnDefaults(columns: TableColumn[]) {
         column.isTreeColumn = false;
       }
     }
+
+    if (!column.hasOwnProperty('visible')) {
+      column.visible = true;
+    }
   }
 }
 
@@ -87,9 +91,9 @@ export function isNullOrUndefined<T>(value: T | null | undefined): value is null
  * Translates templates definitions to objects
  */
 export function translateTemplates(templates: DataTableColumnDirective[]): TableColumn[] {
-  const result: any[] = [];
+  const result: TableColumn[] = [];
   for (const temp of templates) {
-    const col: any = {};
+    const col: TableColumn = {};
 
     const props = Object.getOwnPropertyNames(temp);
     for (const prop of props) {

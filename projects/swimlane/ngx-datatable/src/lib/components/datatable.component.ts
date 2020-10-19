@@ -671,6 +671,7 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
   _groupRowsBy: string;
   _internalRows: any[];
   _columnStates: TableColumn[];
+  _visibleColumnStates: TableColumn[];
   _columns: TableColumn[];
   _columnTemplates: QueryList<DataTableColumnDirective>;
   _subscriptions: Subscription[] = [];
@@ -1267,6 +1268,7 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
   private setColumnStates(val: TableColumn[]) {
     if (this._columnStates !== val) {
       this._columnStates = val;
+      this._visibleColumnStates = val.filter(x => x.visible === undefined || x.visible);
       this.columnStateChange.emit(val);
     }
   }

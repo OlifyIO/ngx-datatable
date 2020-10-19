@@ -209,4 +209,9 @@ export interface TableColumn {
    * @memberOf TableColumn
    */
   summaryTemplate?: any;
+
+  /**
+   * Is column visible. Defaults to true.
+   */
+  visible?: boolean;
 }

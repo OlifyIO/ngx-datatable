@@ -1,8 +1,10 @@
+import { TableColumn } from '../types/table-column.type';
+
 /**
  * Returns the columns by pin.
  */
-export function columnsByPin(cols: any[]) {
-  const ret: { left: any[]; center: any[]; right: any[] } = {
+export function columnsByPin(cols: TableColumn[]) {
+  const ret: { left: TableColumn[]; center: TableColumn[]; right: TableColumn[] } = {
     left: [],
     center: [],
     right: []
