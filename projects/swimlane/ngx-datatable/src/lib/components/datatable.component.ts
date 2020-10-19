@@ -28,7 +28,6 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { INgxDatatableConfig } from '../ngx-datatable.module';
 import { ColumnChangesService } from '../services/column-changes.service';
 import { DimensionsHelper } from '../services/dimensions-helper.service';
-import { ScrollbarHelper } from '../services/scrollbar-helper.service';
 import { ColumnMode } from '../types/column-mode.type';
 import { ContextmenuType } from '../types/contextmenu.type';
 import { SelectionType } from '../types/selection.type';
@@ -678,9 +677,9 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
   _rowHeight: number | 'auto' | ((row?: any) => number) = 30;
   _columnMode: ColumnMode | keyof typeof ColumnMode = ColumnMode.standard;
   _isRecalculatePending = false;
+  _shouldAdjustColumnSizes = false;
 
   constructor(
-    @SkipSelf() private scrollbarHelper: ScrollbarHelper,
     @SkipSelf() private dimensionsHelper: DimensionsHelper,
     private cd: ChangeDetectorRef,
     element: ElementRef,
@@ -711,7 +710,6 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
 
   ngOnChanges() {
     if (this._isRecalculatePending) {
-      this._isRecalculatePending = false;
       this.recalculate();
     }
   }
@@ -850,6 +848,7 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
    * Also can be manually invoked or upon window resize.
    */
   recalculate(): void {
+    this._isRecalculatePending = false;
     this.recalculateDims();
     this.recalculateColumns();
     this.cd.markForCheck();
@@ -859,22 +858,28 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
    * Recalulcates the column widths based on column width
    * distribution mode and scrollbar offsets.
    */
-  recalculateColumns(columns: any[] = this.columnStates, forceIdx: number = -1, allowBleed: boolean = this.scrollbarH) {
-    if (!columns) return;
-    columns = [...columns];
-
-    let width = this._innerWidth;
-    if (this.scrollbarV) {
-      width = width - this.scrollbarHelper.width;
+  recalculateColumns(
+    columns: TableColumn[] = this.columnStates,
+    forceIdx: number = -1,
+    allowBleed: boolean = this.scrollbarH
+  ) {
+    if (!columns) {
+      return;
     }
 
-    if (this.columnMode === ColumnMode.force) {
-      forceFillColumnWidths(columns, width, forceIdx, allowBleed);
-    } else if (this.columnMode === ColumnMode.flex) {
-      adjustColumnWidths(columns, width);
+    let newColumns = columns;
+    const width = this._innerWidth;
+
+    if (!this.scrollbarH || this._shouldAdjustColumnSizes) {
+      if (this.columnMode === ColumnMode.force) {
+        newColumns = forceFillColumnWidths(columns, width, forceIdx);
+      } else if (this.columnMode === ColumnMode.flex) {
+        newColumns = adjustColumnWidths(columns, width);
+      }
     }
 
-    this.setColumnStates(columns);
+    this._shouldAdjustColumnSizes = false;
+    this.setColumnStates(newColumns);
   }
 
   /**
@@ -883,11 +888,19 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
    *
    */
   recalculateDims(): void {
-    const dims = this.dimensionsHelper.getDimensions(this.element);
-    this._innerWidth = Math.floor(dims.width);
+    const dims = this.dimensionsHelper.getClientDimensions(this.element);
+
+    if (this.bodyComponent?.elementRef.nativeElement) {
+      const bodyDims = this.dimensionsHelper.getClientDimensions(this.bodyComponent.elementRef.nativeElement);
+      dims.clientWidth = Math.min(dims.clientWidth, bodyDims.clientWidth);
+    } else {
+      this._isRecalculatePending = true;
+    }
+
+    this._innerWidth = Math.floor(dims.clientWidth);
 
     if (this.scrollbarV) {
-      let height = dims.height;
+      let height = dims.clientHeight;
       if (this.headerHeight) height = height - this.headerHeight;
       if (this.footerHeight) height = height - this.footerHeight;
       this.bodyHeight = height;
@@ -1026,22 +1039,18 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
 
     let idx: number;
     const cols = this.columnStates.map((c, i) => {
-      c = { ...c };
-
       if (c.$$id === column.$$id) {
         idx = i;
-        c.width = newValue;
-
-        // set this so we can force the column
-        // width distribution to be to this value
-        c.$$oldWidth = newValue;
+        return {
+          ...c,
+          width: newValue
+        };
       }
 
       return c;
     });
 
     this.recalculateColumns(cols, idx);
-    this.setColumnStates(cols);
 
     this.resize.emit({
       column,
@@ -1270,6 +1279,7 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
       ...x
     }));
     setColumnDefaults(newColumnState);
+    this._shouldAdjustColumnSizes = true;
     this.setColumnStates(newColumnState);
     this.recalculateColumns();
   }

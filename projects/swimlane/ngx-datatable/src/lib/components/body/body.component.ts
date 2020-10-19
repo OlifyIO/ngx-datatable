@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   EventEmitter,
   HostBinding,
   Input,
@@ -197,11 +198,7 @@ export class DataTableBodyComponent implements OnInit, OnDestroy {
 
   @HostBinding('style.width')
   get bodyWidth(): string {
-    if (this.scrollbarH) {
-      return this.innerWidth + 'px';
-    } else {
-      return '100%';
-    }
+    return '100%';
   }
 
   @Input()
@@ -271,7 +268,7 @@ export class DataTableBodyComponent implements OnInit, OnDestroy {
   /**
    * Creates an instance of DataTableBodyComponent.
    */
-  constructor(private cd: ChangeDetectorRef) {
+  constructor(public elementRef: ElementRef, private cd: ChangeDetectorRef) {
     // declare fn here so we can get access to the `this` property
     this.rowTrackingFn = (index: number, row: any): any => {
       const idx = this.getRowIndex(row);

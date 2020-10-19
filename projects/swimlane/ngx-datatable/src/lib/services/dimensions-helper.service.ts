@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 /**
  * Gets the width of the scrollbar.  Nesc for windows
@@ -6,7 +6,10 @@ import { Inject, Injectable } from '@angular/core';
  */
 @Injectable()
 export class DimensionsHelper {
-  getDimensions(element: Element): ClientRect {
-    return element.getBoundingClientRect();
+  getClientDimensions(element: Element): { clientWidth: number; clientHeight: number } {
+    return {
+      clientWidth: element.clientWidth,
+      clientHeight: element.clientHeight
+    };
   }
 }

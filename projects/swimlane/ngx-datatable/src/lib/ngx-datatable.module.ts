@@ -32,11 +32,10 @@ import { ResizeableDirective } from './directives/resizeable.directive';
 import { VisibilityDirective } from './directives/visibility.directive';
 import { ColumnChangesService } from './services/column-changes.service';
 import { DimensionsHelper } from './services/dimensions-helper.service';
-import { ScrollbarHelper } from './services/scrollbar-helper.service';
 
 @NgModule({
   imports: [CommonModule],
-  providers: [ScrollbarHelper, DimensionsHelper, ColumnChangesService],
+  providers: [DimensionsHelper, ColumnChangesService],
   declarations: [
     DataTableFooterTemplateDirective,
     VisibilityDirective,

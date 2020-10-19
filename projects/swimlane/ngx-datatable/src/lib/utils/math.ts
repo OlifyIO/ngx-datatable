@@ -1,3 +1,4 @@
+import { TableColumn } from '../types/table-column.type';
 import { columnsByPin, columnsTotalWidth } from './column';
 
 /**
@@ -22,18 +23,23 @@ export function adjustColumnWidths(allColumns: any, expectedWidth: any) {
   const totalFlexGrow = getTotalFlexGrow(allColumns);
 
   if (columnsWidth !== expectedWidth) {
-    for (const columnIdx in allColumns) {
-      if (allColumns[columnIdx].canAutoResize) {
-        allColumns[columnIdx] = {
-          ...allColumns[columnIdx],
+    const columns = allColumns.map(c => {
+      if (c.canAutoResize) {
+        return {
+          ...c,
           width: 0
         };
+      } else {
+        return c;
       }
-    }
+    });
 
-    const colsByGroup = columnsByPin(allColumns);
+    const colsByGroup = columnsByPin(columns);
     scaleColumns(colsByGroup, expectedWidth, totalFlexGrow);
+    return columns;
   }
+
+  return allColumns;
 }
 
 /**
@@ -97,12 +103,11 @@ function scaleColumns(colsByGroup: any, maxWidth: any, totalFlexGrow: any) {
  *    the width should use the original width; not the newly proportioned widths.
  */
 export function forceFillColumnWidths(
-  allColumns: any[],
+  allColumns: TableColumn[],
   expectedWidth: number,
   startIdx: number,
-  allowBleed: boolean,
   defaultColWidth: number = 300
-) {
+): TableColumn[] {
   const columnsIdxToResize = allColumns
     .map((c, i) => ({ c, i }))
     .slice(startIdx + 1, allColumns.length)
@@ -111,84 +116,104 @@ export function forceFillColumnWidths(
     })
     .map(({ c, i }) => i);
 
-  for (const columnIdx of columnsIdxToResize) {
-    let column = allColumns[columnIdx];
-    if (!column.$$oldWidth) {
-      column = {
-        ...column,
-        $$oldWidth: column.width
+  const columns = allColumns.map((x, i) => {
+    if (!x.width) {
+      const width = Math.max(
+        x.minWidth ?? 0,
+        x.maxWidth && x.maxWidth < defaultColWidth ? x.maxWidth : defaultColWidth
+      );
+      x = {
+        ...x,
+        width
       };
-      allColumns[columnIdx] = column;
     }
-  }
+
+    if (x.width < (x.minWidth ?? 0)) {
+      x = {
+        ...x,
+        width: x.minWidth ?? 0
+      };
+    } else if (x.maxWidth && x.width > x.maxWidth) {
+      x = {
+        ...x,
+        width: x.maxWidth
+      };
+    } else if (i >= startIdx) {
+      x = {
+        ...x
+      };
+    }
+
+    return x;
+  });
 
   let additionWidthPerColumn = 0;
-  let exceedsWindow = false;
-  let contentWidth = getContentWidth(allColumns, defaultColWidth);
+  let contentWidth = getContentWidth(columns);
   let remainingWidth = expectedWidth - contentWidth;
-  let columnsToResizeLength = columnsIdxToResize.length;
-  const columnsIdxProcessed: number[] = [];
-  const remainingWidthLimit = 1; // when to stop
 
-  // This loop takes care of the
+  if (remainingWidth === 0) {
+    return columns;
+  }
+
   do {
-    additionWidthPerColumn = remainingWidth / columnsToResizeLength;
-    exceedsWindow = contentWidth >= expectedWidth;
+    additionWidthPerColumn = Math.floor(remainingWidth / columnsIdxToResize.length);
 
-    for (const columnIdx of columnsIdxToResize) {
-      const column = allColumns[columnIdx];
-      if (exceedsWindow && allowBleed) {
-        column.width = column.$$oldWidth || column.width || defaultColWidth;
-      } else {
-        const newSize = (column.width || defaultColWidth) + additionWidthPerColumn;
-
-        if (column.minWidth && newSize < column.minWidth) {
-          column.width = column.minWidth;
-          columnsIdxProcessed.push(columnIdx);
-          columnsToResizeLength--;
-        } else if (column.maxWidth && newSize > column.maxWidth) {
-          column.width = column.maxWidth;
-          columnsIdxProcessed.push(columnIdx);
-          columnsToResizeLength--;
+    if (remainingWidth > 0) {
+      for (let i = 0; i < columnsIdxToResize.length; i++) {
+        const column = columns[columnsIdxToResize[i]];
+        if (column.width === column.maxWidth) {
+          columnsIdxToResize.splice(i, 1);
+          i--;
+        } else if (column.maxWidth && column.maxWidth < column.width + additionWidthPerColumn) {
+          additionWidthPerColumn = column.maxWidth - column.width;
         }
       }
-      column.width = Math.max(0, column.width);
-    }
-
-    additionWidthPerColumn = remainingWidth / columnsToResizeLength;
-    for (const columnIdx of columnsIdxToResize) {
-      const column = allColumns[columnIdx];
-      const newSize = (column.width || defaultColWidth) + additionWidthPerColumn;
-      if (!column.minWidth && !column.maxWidth) {
-        column.width = newSize;
+    } else {
+      for (let i = 0; i < columnsIdxToResize.length; i++) {
+        const column = columns[columnsIdxToResize[i]];
+        const minWidth = column.minWidth ?? 0;
+        if (column.width === minWidth) {
+          columnsIdxToResize.splice(i, 1);
+          i--;
+        } else if (minWidth > column.width + additionWidthPerColumn) {
+          additionWidthPerColumn = minWidth - column.width;
+        }
       }
-      column.width = Math.max(0, column.width);
     }
 
-    contentWidth = getContentWidth(allColumns);
-    remainingWidth = expectedWidth - contentWidth;
-    removeProcessedColumns(columnsIdxToResize, columnsIdxProcessed);
-  } while (remainingWidth > remainingWidthLimit && columnsIdxToResize.length !== 0);
-}
+    for (const columnsIdx of columnsIdxToResize) {
+      columns[columnsIdx].width += additionWidthPerColumn;
+    }
 
-/**
- * Remove the processed columns from the current active columns.
- */
-function removeProcessedColumns(columnsIdxToResize: any[], columnsIdxProcessed: any[]) {
-  for (const column of columnsIdxProcessed) {
-    const index = columnsIdxToResize.indexOf(column);
-    columnsIdxToResize.splice(index, 1);
+    contentWidth = getContentWidth(columns);
+    remainingWidth = expectedWidth - contentWidth;
+  } while (remainingWidth > columnsIdxToResize.length && columnsIdxToResize.length !== 0);
+
+  if (remainingWidth !== 0) {
+    if (startIdx !== -1) {
+      columns[startIdx].width += remainingWidth;
+      const minWidth = columns[startIdx].minWidth ?? 0;
+      if (minWidth && columns[startIdx].minWidth > columns[startIdx].width) {
+        columns[startIdx].width = columns[startIdx].minWidth;
+      } else if (columns[startIdx].maxWidth && columns[startIdx].maxWidth < columns[startIdx].width) {
+        columns[startIdx].width = columns[startIdx].maxWidth;
+      }
+    } else if (columnsIdxToResize.length) {
+      columns[columnsIdxToResize[columnsIdxToResize.length - 1]].width += remainingWidth;
+    }
   }
+
+  return columns;
 }
 
 /**
  * Gets the width of the columns
  */
-function getContentWidth(allColumns: any, defaultColWidth: number = 300): number {
+function getContentWidth(allColumns: any): number {
   let contentWidth = 0;
 
   for (const column of allColumns) {
-    contentWidth += column.width || defaultColWidth;
+    contentWidth += column.width;
   }
 
   return contentWidth;

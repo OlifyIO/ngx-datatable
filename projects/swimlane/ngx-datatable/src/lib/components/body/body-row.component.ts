@@ -17,7 +17,6 @@ import {
 import { TreeStatus } from './body-cell.component';
 import { columnsByPin, columnGroupWidths, columnsByPinArr } from '../../utils/column';
 import { Keys } from '../../utils/keys';
-import { ScrollbarHelper } from '../../services/scrollbar-helper.service';
 import { translateXY } from '../../utils/translate';
 
 @Component({
@@ -148,12 +147,7 @@ export class DataTableBodyRowComponent implements DoCheck {
 
   private _rowDiffer: KeyValueDiffer<{}, {}>;
 
-  constructor(
-    private differs: KeyValueDiffers,
-    @SkipSelf() private scrollbarHelper: ScrollbarHelper,
-    private cd: ChangeDetectorRef,
-    element: ElementRef
-  ) {
+  constructor(private differs: KeyValueDiffers, private cd: ChangeDetectorRef, element: ElementRef) {
     this._element = element.nativeElement;
     this._rowDiffer = differs.find({}).create();
   }
@@ -193,7 +187,7 @@ export class DataTableBodyRowComponent implements DoCheck {
       const bodyWidth = parseInt(this.innerWidth + '', 0);
       const totalDiff = widths.total - bodyWidth;
       const offsetDiff = totalDiff - offsetX;
-      const offset = (offsetDiff + this.scrollbarHelper.width) * -1;
+      const offset = offsetDiff * -1;
       translateXY(styles, offset, 0);
     }
 

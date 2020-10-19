@@ -20,13 +20,6 @@ export interface TableColumn {
   $$id?: string;
 
   /**
-   * Internal for column width distributions
-   *
-   * @memberOf TableColumn
-   */
-  $$oldWidth?: number;
-
-  /**
    * Internal for setColumnDefaults
    *
    * @memberOf TableColumn

@@ -30,6 +30,10 @@ export function setColumnDefaults(columns: TableColumn[]) {
       column.$$valueGetter = getterForProp(column.prop);
     }
 
+    if (column.minWidth === undefined) {
+      column.minWidth = 40;
+    }
+
     // format props if no name passed
     if (!isNullOrUndefined(column.prop) && isNullOrUndefined(column.name)) {
       column.name = deCamelCase(String(column.prop));

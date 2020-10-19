@@ -88,14 +88,7 @@ export class ResizeableDirective implements OnDestroy, AfterViewInit {
     const movementX = event.screenX - mouseDownScreenX;
     const newWidth = initialWidth + movementX;
 
-    const overMinWidth = !this.minWidth || newWidth >= this.minWidth;
-    const underMaxWidth = !this.maxWidth || newWidth <= this.maxWidth;
-
-    if (overMinWidth && underMaxWidth) {
-      this.element.style.width = `${newWidth}px`;
-    }
-
-    this.resize.emit(this.element.clientWidth);
+    this.resize.emit(newWidth);
   }
 
   private _destroySubscription() {
