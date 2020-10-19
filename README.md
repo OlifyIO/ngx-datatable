@@ -5,11 +5,14 @@ Unofficial fork of @swimlane/ngx-datatable with bugfixes and some extra features
 - Feature: exposed new column state API (saving/restoring, etc.)
 - Feature: custom template for empty data message
 - Fix: multiple bugs in column resizing behavior
+- Fix: gap after last column if using scrollbarV="true" (when scrollbar appears if it was previously hidden)
+- Fix: glitching column resizing when pushed to table edges
 - Fix: correct table recalculation on component resizing (not just window:resize)
 - Fix: recalculate on Input changes (rowHeight, columnMode, etc.)
 - Fix: change detection not triggered on body scroll (rows not being rendered when using virtual scroll)
 - Fix: body's internal offset not reset when scroller gets recreated
 - Improvement: columns now re-render immediately when resizing
+- Improvement: columns in 'force' mode now resize proportionally to their original width
 - Improvement: performance optimizations
 
 [![Join the chat at https://gitter.im/swimlane/ngx-datatable](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/swimlane/ngx-datatable?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)

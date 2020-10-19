@@ -147,47 +147,49 @@ export function forceFillColumnWidths(
     return x;
   });
 
-  let additionWidthPerColumn = 0;
   let contentWidth = getContentWidth(columns);
   let remainingWidth = expectedWidth - contentWidth;
 
-  if (remainingWidth === 0) {
+  if (remainingWidth === 0 || columnsIdxToResize.length === 0) {
     return columns;
   }
 
+  const originalWidths = new Map<number, number>();
+  columnsIdxToResize.forEach(i => originalWidths.set(i, columns[i].width));
+
   do {
-    additionWidthPerColumn = Math.floor(remainingWidth / columnsIdxToResize.length);
+    let totalOriginalWidths = columnsIdxToResize.map(i => originalWidths.get(i)).reduce((a, b) => a + b, 0);
+    let additionWidthPerOriginalWidth = remainingWidth / totalOriginalWidths;
+
+    for (const columnsIdx of columnsIdxToResize) {
+      const additionWidthPerColumn = additionWidthPerOriginalWidth * originalWidths.get(columnsIdx);
+      columns[columnsIdx].width += additionWidthPerColumn;
+    }
 
     if (remainingWidth > 0) {
       for (let i = 0; i < columnsIdxToResize.length; i++) {
         const column = columns[columnsIdxToResize[i]];
-        if (column.width === column.maxWidth) {
+        if (column.width >= column.maxWidth) {
+          column.width = column.maxWidth;
           columnsIdxToResize.splice(i, 1);
           i--;
-        } else if (column.maxWidth && column.maxWidth < column.width + additionWidthPerColumn) {
-          additionWidthPerColumn = column.maxWidth - column.width;
         }
       }
     } else {
       for (let i = 0; i < columnsIdxToResize.length; i++) {
         const column = columns[columnsIdxToResize[i]];
         const minWidth = column.minWidth ?? 0;
-        if (column.width === minWidth) {
+        if (column.width <= minWidth) {
+          column.width = minWidth;
           columnsIdxToResize.splice(i, 1);
           i--;
-        } else if (minWidth > column.width + additionWidthPerColumn) {
-          additionWidthPerColumn = minWidth - column.width;
         }
       }
     }
 
-    for (const columnsIdx of columnsIdxToResize) {
-      columns[columnsIdx].width += additionWidthPerColumn;
-    }
-
     contentWidth = getContentWidth(columns);
     remainingWidth = expectedWidth - contentWidth;
-  } while (remainingWidth > columnsIdxToResize.length && columnsIdxToResize.length !== 0);
+  } while (remainingWidth > 1 && columnsIdxToResize.length !== 0);
 
   if (remainingWidth !== 0) {
     if (startIdx !== -1) {

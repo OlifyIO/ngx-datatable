@@ -1187,6 +1187,7 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
   ngOnDestroy() {
     this._subscriptions.forEach(subscription => subscription.unsubscribe());
   }
+
   /**
    * Restores the original state of the columns as set by columnTemplates
    * or the columns property.
