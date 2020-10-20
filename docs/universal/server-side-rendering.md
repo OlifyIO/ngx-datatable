@@ -34,7 +34,7 @@ export class ServerDimensionsHelper extends DimensionsHelper {
     super();
   }
 
-  getDimensions(element: Element): ClientRect {
+  getBoundingClientRect(element: Element): ClientRect {
     const width = parseInt(this.request.cookies['CH-DW'], 10) || 1000;
     const height = parseInt(this.request.cookies['CH-DH'], 10) || 800;
 

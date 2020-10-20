@@ -1,23 +1,21 @@
 import {
-  Component,
-  Input,
-  HostBinding,
-  ElementRef,
-  Output,
-  KeyValueDiffers,
-  KeyValueDiffer,
-  EventEmitter,
-  HostListener,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  Component,
   DoCheck,
-  SkipSelf
+  ElementRef,
+  EventEmitter,
+  HostBinding,
+  HostListener,
+  Input,
+  KeyValueDiffer,
+  KeyValueDiffers,
+  Output
 } from '@angular/core';
-
-import { TreeStatus } from './body-cell.component';
-import { columnsByPin, columnGroupWidths, columnsByPinArr } from '../../utils/column';
+import { columnGroupWidths, columnsByPin, columnsByPinArr } from '../../utils/column';
 import { Keys } from '../../utils/keys';
 import { translateXY } from '../../utils/translate';
+import { TreeStatus } from './body-cell.component';
 
 @Component({
   selector: 'datatable-body-row',
@@ -163,7 +161,7 @@ export class DataTableBodyRowComponent implements DoCheck {
   }
 
   columnTrackingFn(index: number, column: any): any {
-    return column.$$id;
+    return column.id;
   }
 
   buildStylesByGroup() {

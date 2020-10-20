@@ -1,16 +1,16 @@
+import { DOCUMENT } from '@angular/common';
 import {
-  Directive,
-  Output,
-  EventEmitter,
-  ContentChildren,
-  QueryList,
-  KeyValueDiffers,
   AfterContentInit,
+  ContentChildren,
+  Directive,
+  EventEmitter,
+  Inject,
+  KeyValueDiffers,
   OnDestroy,
-  Inject
+  Output,
+  QueryList
 } from '@angular/core';
 import { DraggableDirective } from './draggable.directive';
-import { DOCUMENT } from '@angular/common';
 
 @Directive({ selector: '[orderable]' })
 export class OrderableDirective implements AfterContentInit, OnDestroy {
@@ -148,7 +148,7 @@ export class OrderableDirective implements AfterContentInit, OnDestroy {
 
   private createMapDiffs(): { [key: string]: DraggableDirective } {
     return this.draggables.toArray().reduce((acc, curr) => {
-      acc[curr.dragModel.$$id] = curr;
+      acc[curr.dragModel.id] = curr;
       return acc;
     }, {});
   }

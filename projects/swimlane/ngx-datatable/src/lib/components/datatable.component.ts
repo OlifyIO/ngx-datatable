@@ -1040,7 +1040,7 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
 
     let idx: number;
     const cols = this.columnStates.map((c, i) => {
-      if (c.$$id === column.$$id) {
+      if (c.id === column.id) {
         idx = i;
         return {
           ...c,
@@ -1193,7 +1193,7 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
    * Restores the original state of the columns as set by columnTemplates
    * or the columns property.
    */
-  resetOriginalColumnStates() {
+  resetColumnStates() {
     if (this.columnTemplates?.length > 0) {
       this.translateColumns(this.columnTemplates);
     } else {
@@ -1208,7 +1208,7 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
     // we want to preserve the order of passed columnStates
     const newColumnStates = columnStates
       .map(columnState => {
-        const oldState = this.columnStates.find(old => old.name === columnState.name);
+        const oldState = this.columnStates.find(old => old.id === columnState.id);
         if (!oldState) {
           return null;
         }
@@ -1226,7 +1226,7 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
 
     const missingColumns = this.columnStates
       .map((c, i) => ({ c, i }))
-      .filter(x => !newColumnStates.some(y => y.name === x.c.name));
+      .filter(x => !newColumnStates.some(y => y.id === x.c.id));
     for (const missingColumn of missingColumns) {
       newColumnStates.splice(missingColumn.i, 0, missingColumn.c);
     }
@@ -1236,7 +1236,7 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
 
   setColumnState(columnState: Partial<TableColumn>) {
     const newColumnStates = this.columnStates.map(c => {
-      if (c.name === columnState.name) {
+      if (c.id === columnState.id) {
         const newColumnState = { ...c };
         for (const prop in columnState) {
           if (columnState.hasOwnProperty(prop)) {

@@ -16,8 +16,8 @@ export function setColumnDefaults(columns: TableColumn[]) {
   let treeColumnFound: boolean = false;
 
   for (const column of columns) {
-    if (!column.$$id) {
-      column.$$id = id();
+    if (!column.id) {
+      column.id = id();
     }
 
     // prop can be numeric; zero is valid not a missing prop

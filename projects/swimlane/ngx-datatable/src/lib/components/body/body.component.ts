@@ -738,7 +738,7 @@ export class DataTableBodyComponent implements OnInit, OnDestroy {
    * Tracks the column
    */
   columnTrackingFn(index: number, column: any): any {
-    return column.$$id;
+    return column.id;
   }
 
   /**

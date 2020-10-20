@@ -1,10 +1,9 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, ElementRef } from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-
-import { OrderableDirective } from './orderable.directive';
-import { DraggableDirective } from './draggable.directive';
 import { id } from '../utils/id';
+import { DraggableDirective } from './draggable.directive';
+import { OrderableDirective } from './orderable.directive';
 
 @Component({
   selector: 'test-fixture-component',
@@ -78,7 +77,7 @@ describe('OrderableDirective', () => {
 
         // used for the KeyValueDiffer
         draggable.dragModel = {
-          $$id: id()
+          id: id()
         };
 
         return draggable;

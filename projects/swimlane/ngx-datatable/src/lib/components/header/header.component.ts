@@ -1,18 +1,18 @@
 import {
-  Component,
-  Output,
-  EventEmitter,
-  Input,
-  HostBinding,
-  ChangeDetectorRef,
   ChangeDetectionStrategy,
-  OnDestroy
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  HostBinding,
+  Input,
+  OnDestroy,
+  Output
 } from '@angular/core';
-import { columnsByPin, columnGroupWidths, columnsByPinArr } from '../../utils/column';
-import { SortType } from '../../types/sort.type';
 import { SelectionType } from '../../types/selection.type';
-import { DataTableColumnDirective } from '../columns/column.directive';
+import { SortType } from '../../types/sort.type';
+import { columnGroupWidths, columnsByPin, columnsByPinArr } from '../../utils/column';
 import { translateXY } from '../../utils/translate';
+import { DataTableColumnDirective } from '../columns/column.directive';
 
 @Component({
   selector: 'datatable-header',
@@ -181,7 +181,7 @@ export class DataTableHeaderComponent implements OnDestroy {
     setTimeout(() => {
       // datatable component creates copies from columns on reorder
       // set dragging to false on new objects
-      const column = this._columns.find(c => c.$$id === model.$$id);
+      const column = this._columns.find(c => c.id === model.id);
       if (column) {
         column.dragging = false;
       }
@@ -202,7 +202,7 @@ export class DataTableHeaderComponent implements OnDestroy {
   }
 
   columnTrackingFn(index: number, column: any): any {
-    return column.$$id;
+    return column.id;
   }
 
   onColumnResized(width: number, column: DataTableColumnDirective): void {
