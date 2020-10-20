@@ -1,13 +1,12 @@
-import { async, TestBed, ComponentFixture } from '@angular/core/testing';
-import { DataTableBodyComponent } from './body.component';
-import { DataTableBodyRowComponent } from './body-row.component';
-import { DataTableRowWrapperComponent } from './body-row-wrapper.component';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { DataTableBodyCellComponent } from './body-cell.component';
-import { DataTableSelectionComponent } from './selection.component';
-import { DataTableSummaryRowComponent } from './summary/summary-row.component';
+import { DataTableRowWrapperComponent } from './body-row-wrapper.component';
+import { DataTableBodyRowComponent } from './body-row.component';
+import { DataTableBodyComponent } from './body.component';
 import { ProgressBarComponent } from './progress-bar.component';
 import { ScrollerComponent } from './scroller.component';
-import { ScrollbarHelper } from '../../services/scrollbar-helper.service';
+import { DataTableSelectionComponent } from './selection.component';
+import { DataTableSummaryRowComponent } from './summary/summary-row.component';
 
 describe('DataTableBodyComponent', () => {
   let fixture: ComponentFixture<DataTableBodyComponent>;
@@ -27,7 +26,7 @@ describe('DataTableBodyComponent', () => {
         ProgressBarComponent,
         ScrollerComponent
       ],
-      providers: [ScrollbarHelper]
+      providers: []
     });
   });
 

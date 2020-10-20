@@ -1,12 +1,10 @@
-import { async, TestBed, ComponentFixture } from '@angular/core/testing';
-import { DebugElement, PipeTransform } from '@angular/core';
+import { DebugElement } from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-
-import { DataTableBodyRowComponent } from '../body-row.component';
-import { DataTableBodyCellComponent } from '../body-cell.component';
-import { DataTableSummaryRowComponent, ISummaryColumn } from './summary-row.component';
-import { ScrollbarHelper } from '../../../services/scrollbar-helper.service';
 import { setColumnDefaults } from '../../../utils/column-helper';
+import { DataTableBodyCellComponent } from '../body-cell.component';
+import { DataTableBodyRowComponent } from '../body-row.component';
+import { DataTableSummaryRowComponent, ISummaryColumn } from './summary-row.component';
 
 describe('DataTableSummaryRowComponent', () => {
   let fixture: ComponentFixture<DataTableSummaryRowComponent>;
@@ -28,7 +26,7 @@ describe('DataTableSummaryRowComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [DataTableSummaryRowComponent, DataTableBodyRowComponent, DataTableBodyCellComponent],
-      providers: [ScrollbarHelper]
+      providers: []
     }).compileComponents();
   }));
 
