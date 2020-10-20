@@ -1087,7 +1087,7 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
       }
     }
 
-    this.setColumnStates(cols);
+    this.recalculateColumns(cols);
 
     this.reorder.emit({
       column,
@@ -1231,9 +1231,12 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
       newColumnStates.splice(missingColumn.i, 0, missingColumn.c);
     }
 
-    this.setColumnStates(newColumnStates);
+    this.recalculateColumns(newColumnStates);
   }
 
+  /**
+   * Sets the state of a single column.
+   */
   setColumnState(columnState: Partial<TableColumn>) {
     const newColumnStates = this.columnStates.map(c => {
       if (c.id === columnState.id) {
@@ -1248,7 +1251,7 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
 
       return c;
     });
-    this.setColumnStates(newColumnStates);
+    this.recalculateColumns(newColumnStates);
   }
 
   /**
@@ -1283,7 +1286,6 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
     }));
     setColumnDefaults(newColumnState);
     this._shouldAdjustColumnSizes = true;
-    this.setColumnStates(newColumnState);
-    this.recalculateColumns();
+    this.recalculateColumns(newColumnState);
   }
 }
