@@ -4,6 +4,7 @@ Unofficial fork of @swimlane/ngx-datatable with bugfixes and some extra features
 
 ## 20.0.0 - 2021-02-10
 
+- Breaking: Upgrade to Angular 11
 - Improvement: Load @juggle/resize-observer polyfill only when needed (polyfill causes unneccessary change detections)
 
 ## 19.1.0 - 2020-12-01
