@@ -39,7 +39,7 @@ export class ColumnReorderComponent {
   reorderable = true;
   swapColumns = false;
 
-  columns = [{ prop: 'name' }, { name: 'Age', visible: false }, { name: 'Gender' }, { name: 'Company' }];
+  columns = [{ prop: 'name' }, { name: 'Gender' }, { name: 'ZAge', width: 60 }, { name: 'Company' }];
 
   ColumnMode = ColumnMode;
 

@@ -17,7 +17,7 @@ import { nextSortDir } from '../../utils/sort';
 @Component({
   selector: 'datatable-header-cell',
   template: `
-    <div class="datatable-header-cell-template-wrap">
+    <div class="datatable-header-cell-template-wrap" [class.target]="isTarget">
       <ng-container *ngIf="isTarget">
         <ng-template
           *ngIf="targetMarkerTemplate"
@@ -166,7 +166,7 @@ export class DataTableHeaderCellComponent {
 
   sortFn = this.onSort.bind(this);
   sortClass: string;
-  sortDir: SortDirection;
+  sortDir: SortDirection = null;
   selectFn = this.select.emit.bind(this.select);
 
   cellContext: any = {

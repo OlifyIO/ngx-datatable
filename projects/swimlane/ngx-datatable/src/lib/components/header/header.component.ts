@@ -45,9 +45,9 @@ import { DataTableColumnDirective } from '../columns/column.directive';
           [dragModel]="column"
           [dragEventTarget]="dragEventTarget"
           [headerHeight]="headerHeight"
-          [isTarget]="column.isTarget"
+          [isTarget]="targetColumnId == column.id"
           [targetMarkerTemplate]="targetMarkerTemplate"
-          [targetMarkerContext]="column.targetMarkerContext"
+          [targetMarkerContext]="targetMarkerContext"
           [column]="column"
           [sortType]="sortType"
           [sorts]="sorts"
@@ -77,7 +77,8 @@ export class DataTableHeaderComponent implements OnDestroy {
   @Input() dealsWithGroup: boolean;
   @Input() targetMarkerTemplate: any;
 
-  targetMarkerContext: any;
+  targetMarkerContext: any = null;
+  targetColumnId: string = null;
 
   @Input() set innerWidth(val: number) {
     this._innerWidth = val;
@@ -221,8 +222,8 @@ export class DataTableHeaderComponent implements OnDestroy {
 
   onColumnReordered({ prevIndex, newIndex, model }: any): void {
     const column = this.getColumn(newIndex);
-    column.isTarget = false;
-    column.targetMarkerContext = undefined;
+    this.targetColumnId = null;
+    this.targetMarkerContext = null;
     this.reorder.emit({
       column: model,
       prevValue: prevIndex,
@@ -232,16 +233,16 @@ export class DataTableHeaderComponent implements OnDestroy {
 
   onTargetChanged({ prevIndex, newIndex, initialIndex }: any): void {
     if (prevIndex || prevIndex === 0) {
-      const oldColumn = this.getColumn(prevIndex);
-      oldColumn.isTarget = false;
-      oldColumn.targetMarkerContext = undefined;
+      this.targetColumnId = null;
+      this.targetMarkerContext = null;
     }
     if (newIndex || newIndex === 0) {
       const newColumn = this.getColumn(newIndex);
-      newColumn.isTarget = true;
+
+      this.targetColumnId = newColumn.id;
 
       if (initialIndex !== newIndex) {
-        newColumn.targetMarkerContext = {
+        this.targetMarkerContext = {
           class: 'targetMarker '.concat(initialIndex > newIndex ? 'dragFromRight' : 'dragFromLeft')
         };
       }

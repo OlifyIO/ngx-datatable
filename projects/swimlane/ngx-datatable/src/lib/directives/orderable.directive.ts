@@ -5,6 +5,7 @@ import {
   Directive,
   EventEmitter,
   Inject,
+  Input,
   KeyValueDiffers,
   OnDestroy,
   Output,
@@ -20,13 +21,17 @@ export class OrderableDirective implements AfterContentInit, OnDestroy {
   @ContentChildren(DraggableDirective, { descendants: true })
   draggables: QueryList<DraggableDirective>;
 
-  positions: any;
+  positions: any[];
   differ: any;
   lastDraggingIndex: number;
+  draggedElement: HTMLElement = null;
 
   constructor(differs: KeyValueDiffers, @Inject(DOCUMENT) private document: any) {
     this.differ = differs.find({}).create();
   }
+
+  @Input() overlapDraggingMode = true;
+  @Input() minOverlapPx = 50;
 
   ngAfterContentInit(): void {
     // HACK: Investigate Better Way
@@ -70,24 +75,25 @@ export class OrderableDirective implements AfterContentInit, OnDestroy {
     }
   }
 
-  onDragStart(): void {
-    this.positions = {};
+  onDragStart({ element, model, event }): void {
+    this.positions = [];
+    this.draggedElement = element;
 
     let i = 0;
     for (const dragger of this.draggables.toArray()) {
       const elm = dragger.element;
       const left = parseInt(elm.offsetLeft.toString(), 0);
-      this.positions[dragger.dragModel.prop] = {
+      this.positions.push({
         left,
         right: left + parseInt(elm.offsetWidth.toString(), 0),
         index: i++,
         element: elm
-      };
+      });
     }
   }
 
   onDragging({ element, model, event }: any): void {
-    const prevPos = this.positions[model.prop];
+    const prevPos = this.positions.find(x => x.element === element);
     const target = this.isTarget(model, event);
 
     if (target) {
@@ -109,7 +115,7 @@ export class OrderableDirective implements AfterContentInit, OnDestroy {
   }
 
   onDragEnd({ element, model, event }: any): void {
-    const prevPos = this.positions[model.prop];
+    const prevPos = this.positions.find(x => x.element === element);
 
     const target = this.isTarget(model, event);
     if (target) {
@@ -120,22 +126,31 @@ export class OrderableDirective implements AfterContentInit, OnDestroy {
       });
     }
 
+    this.draggedElement = null;
+
+    this.targetChanged.emit({
+      prevIndex: this.lastDraggingIndex,
+      initialIndex: prevPos.index
+    });
+
     this.lastDraggingIndex = undefined;
     element.style.left = 'auto';
   }
 
   isTarget(model: any, event: any): any {
+    if (!this.draggedElement) {
+      return null;
+    }
+
     let i = 0;
+
     const x = event.x || event.clientX;
     const y = event.y || event.clientY;
     const targets = this.document.elementsFromPoint(x, y);
 
-    for (const prop in this.positions) {
-      // current column position which throws event.
-      const pos = this.positions[prop];
-
+    for (const pos of this.positions) {
       // since we drag the inner span, we need to find it in the elements at the cursor
-      if (model.prop !== prop && targets.find((el: any) => el === pos.element)) {
+      if (pos.element !== this.draggedElement && targets.find((el: any) => el === pos.element)) {
         return {
           pos,
           i
@@ -144,6 +159,33 @@ export class OrderableDirective implements AfterContentInit, OnDestroy {
 
       i++;
     }
+
+    if (this.overlapDraggingMode) {
+      i = 0;
+
+      const draggedElementLeft = this.draggedElement.offsetLeft;
+      const draggedElementRight = draggedElementLeft + parseInt(this.draggedElement.offsetWidth.toString(), 0);
+
+      for (const pos of this.positions) {
+        if (pos.element !== this.draggedElement) {
+          const minElOverlap = Math.min(this.minOverlapPx, parseInt(pos.element.offsetWidth.toString(), 0));
+
+          if (
+            (draggedElementLeft >= pos.left && draggedElementLeft + minElOverlap <= pos.right) ||
+            (draggedElementRight - minElOverlap >= pos.left && draggedElementRight <= pos.right)
+          ) {
+            return {
+              pos,
+              i
+            };
+          }
+        }
+
+        i++;
+      }
+    }
+
+    return null;
   }
 
   private createMapDiffs(): { [key: string]: DraggableDirective } {
