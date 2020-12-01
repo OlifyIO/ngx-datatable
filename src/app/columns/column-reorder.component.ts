@@ -3,22 +3,7 @@ import { ColumnMode } from 'projects/swimlane/ngx-datatable/src/public-api';
 
 @Component({
   selector: 'column-reorder-demo',
-  styles: [
-    `
-      .icon {
-        position: absolute;
-      }
-      .datatable-icon-down {
-        top: 0px;
-      }
-      .datatable-icon-up {
-        top: 40px;
-      }
-      .dragFromLeft .icon {
-        left: -13px;
-      }
-    `
-  ],
+  styles: [``],
   template: `
     <div>
       <h3>
@@ -43,15 +28,8 @@ import { ColumnMode } from 'projects/swimlane/ngx-datatable/src/public-api';
         rowHeight="auto"
         [reorderable]="reorderable"
         [swapColumns]="swapColumns"
-        [targetMarkerTemplate]="targetMarkerTemplate"
       >
       </ngx-datatable>
-      <ng-template #targetMarkerTemplate let-class="class">
-        <div [ngClass]="class">
-          <div class="icon datatable-icon-down"></div>
-          <div class="icon datatable-icon-up"></div>
-        </div>
-      </ng-template>
     </div>
   `
 })
@@ -61,7 +39,7 @@ export class ColumnReorderComponent {
   reorderable = true;
   swapColumns = false;
 
-  columns = [{ prop: 'name' }, { name: 'Gender' }, { name: 'Company', sortable: false }];
+  columns = [{ prop: 'name' }, { name: 'Age', visible: false }, { name: 'Gender' }, { name: 'Company' }];
 
   ColumnMode = ColumnMode;
 

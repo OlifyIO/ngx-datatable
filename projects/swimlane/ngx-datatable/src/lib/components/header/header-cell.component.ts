@@ -1,29 +1,39 @@
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
-  Input,
   EventEmitter,
-  Output,
   HostBinding,
   HostListener,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef
+  Input,
+  Output
 } from '@angular/core';
-import { SortType } from '../../types/sort.type';
 import { SelectionType } from '../../types/selection.type';
+import { SortDirection } from '../../types/sort-direction.type';
+import { SortType } from '../../types/sort.type';
 import { TableColumn } from '../../types/table-column.type';
 import { nextSortDir } from '../../utils/sort';
-import { SortDirection } from '../../types/sort-direction.type';
 
 @Component({
   selector: 'datatable-header-cell',
   template: `
     <div class="datatable-header-cell-template-wrap">
-      <ng-template
-        *ngIf="isTarget"
-        [ngTemplateOutlet]="targetMarkerTemplate"
-        [ngTemplateOutletContext]="targetMarkerContext"
-      >
-      </ng-template>
+      <ng-container *ngIf="isTarget">
+        <ng-template
+          *ngIf="targetMarkerTemplate"
+          [ngTemplateOutlet]="targetMarkerTemplate"
+          [ngTemplateOutletContext]="targetMarkerContext"
+        >
+        </ng-template>
+
+        <ng-container *ngIf="!targetMarkerTemplate">
+          <div class="default-target-marker" [ngClass]="targetMarkerContext?.class">
+            <div class="icon datatable-icon-down"></div>
+            <div class="icon datatable-icon-up"></div>
+          </div>
+        </ng-container>
+      </ng-container>
+
       <label *ngIf="isCheckboxable" class="datatable-checkbox">
         <input type="checkbox" [checked]="allRowsSelected" (change)="select.emit(!allRowsSelected)" />
       </label>

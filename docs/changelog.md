@@ -1,8 +1,13 @@
 # Changelog
 
-## 19.0.0
-
 Unofficial fork of @swimlane/ngx-datatable with bugfixes and some extra features.
+
+## 19.1.0 - 2020-12-1
+
+- Feature: added default column reordering marker
+- Fix: reordering columns when some columns are hidden
+
+## 19.0.0 - 2020-10-20
 
 - Feature: exposed new column state API (saving/restoring, etc.)
 - Feature: custom template for empty data message

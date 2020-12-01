@@ -41,6 +41,7 @@ $ngx-datatable-selected-active-color-focus: #fff !default;
 
 // colors for header elements
 $datatable-header-cell-background: #fff !default;
+$datatable-header-cell-dragging-background: transparentize($datatable-header-cell-background, 0.5) !default;
 $datatable-header-cell-color: rgba(0, 0, 0, 0.54) !default;
 $datatable-header-border-bottom-color: rgba(0, 0, 0, 0.12) !default;
 $datatable-header-resize-handle-color: #eee !default;
@@ -242,8 +243,25 @@ $datatable-summary-row-background-hover: #ddd !default;
       }
 
       &.dragging {
+        background-color: $datatable-header-cell-dragging-background;
+
         .resize-handle {
           border-right: none;
+        }
+      }
+
+      .default-target-marker {
+        .icon {
+          position: absolute;
+        }
+        .datatable-icon-down {
+          top: 0px;
+        }
+        .datatable-icon-up {
+          top: 40px;
+        }
+        .dragFromLeft .icon {
+          left: -13px;
         }
       }
     }

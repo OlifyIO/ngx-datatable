@@ -1067,23 +1067,28 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
       return { ...c };
     });
 
+    // newValue and prevValue are indexes to an array that is filtered by only visible columns
+    const realPrevValue = cols.findIndex(x => x.id === column.id);
+    const targetCol = cols.filter(x => x.visible)[newValue];
+    const realNewValue = cols.indexOf(targetCol);
+
     if (this.swapColumns) {
-      const prevCol = cols[newValue];
-      cols[newValue] = column;
-      cols[prevValue] = prevCol;
+      const prevCol = cols[realNewValue];
+      cols[realNewValue] = column;
+      cols[realPrevValue] = prevCol;
     } else {
-      if (newValue > prevValue) {
-        const movedCol = cols[prevValue];
-        for (let i = prevValue; i < newValue; i++) {
+      if (realNewValue > realPrevValue) {
+        const movedCol = cols[realPrevValue];
+        for (let i = realPrevValue; i < realNewValue; i++) {
           cols[i] = cols[i + 1];
         }
-        cols[newValue] = movedCol;
+        cols[realNewValue] = movedCol;
       } else {
-        const movedCol = cols[prevValue];
-        for (let i = prevValue; i > newValue; i--) {
+        const movedCol = cols[realPrevValue];
+        for (let i = realPrevValue; i > realNewValue; i--) {
           cols[i] = cols[i - 1];
         }
-        cols[newValue] = movedCol;
+        cols[realNewValue] = movedCol;
       }
     }
 

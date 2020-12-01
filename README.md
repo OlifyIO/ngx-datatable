@@ -5,6 +5,7 @@ Unofficial fork of @swimlane/ngx-datatable with bugfixes and some extra features
 - Feature: exposed new column state API (saving/restoring, etc.)
 - Feature: custom template for empty data message
 - Feature: added 'visible' column property on TableColumn for toggling its visibility
+- Feature: added default column reordering marker
 - Fix: multiple bugs in column resizing behavior
 - Fix: gap after last column if using scrollbarV="true" (when scrollbar appears if it was previously hidden)
 - Fix: glitching column resizing when pushed to table edges
