@@ -1,6 +1,4 @@
-import { Directive, Input, Output, EventEmitter, ElementRef, OnDestroy, ViewChild } from '@angular/core';
-
-import { ResizeObserver, ResizeObserverEntry } from '@juggle/resize-observer';
+import { Directive, ElementRef, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 
 /**
  * ResizeObserverDirective is used to detect element resizes independent from a window resize event
@@ -31,6 +29,28 @@ export class ResizeObserverDirective implements OnDestroy {
 
   constructor(element: ElementRef) {
     this.resizeElement = element.nativeElement;
+    this.createResizeObserver();
+  }
+
+  ngOnDestroy(): void {
+    this.detach();
+    this.resizeObserver?.disconnect();
+  }
+
+  private attach() {
+    this.resizeObserver?.observe(this.resizeElement);
+  }
+
+  private detach() {
+    this.resizeObserver?.unobserve(this.resizeElement);
+  }
+
+  private async createResizeObserver() {
+    if ('ResizeObserver' in window === false) {
+      // Loads polyfill asynchronously, only if required.
+      const module = await import('@juggle/resize-observer');
+      (window as any).ResizeObserver = module.ResizeObserver;
+    }
 
     this.resizeObserver = new ResizeObserver((entries, observer) => {
       for (const entry of entries) {
@@ -40,18 +60,5 @@ export class ResizeObserverDirective implements OnDestroy {
         }
       }
     });
-  }
-
-  ngOnDestroy(): void {
-    this.detach();
-    this.resizeObserver.disconnect();
-  }
-
-  private attach() {
-    this.resizeObserver.observe(this.resizeElement);
-  }
-
-  private detach() {
-    this.resizeObserver.unobserve(this.resizeElement);
   }
 }

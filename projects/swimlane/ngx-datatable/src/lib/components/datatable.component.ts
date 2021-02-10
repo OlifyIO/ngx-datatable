@@ -23,7 +23,6 @@ import {
   ViewChild,
   ViewEncapsulation
 } from '@angular/core';
-import { ResizeObserverEntry } from '@juggle/resize-observer';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { INgxDatatableConfig } from '../ngx-datatable.module';
 import { ColumnChangesService } from '../services/column-changes.service';
