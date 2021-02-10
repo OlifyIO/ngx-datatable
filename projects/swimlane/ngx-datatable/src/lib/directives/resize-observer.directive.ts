@@ -1,4 +1,4 @@
-import { Directive, ElementRef, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, Input, NgZone, OnDestroy, Output } from '@angular/core';
 
 /**
  * ResizeObserverDirective is used to detect element resizes independent from a window resize event
@@ -27,7 +27,7 @@ export class ResizeObserverDirective implements OnDestroy {
 
   private _enabled: boolean = false;
 
-  constructor(element: ElementRef) {
+  constructor(element: ElementRef, private ngZone: NgZone) {
     this.resizeElement = element.nativeElement;
     this.createResizeObserver();
   }
@@ -55,7 +55,10 @@ export class ResizeObserverDirective implements OnDestroy {
     this.resizeObserver = new ResizeObserver((entries, observer) => {
       for (const entry of entries) {
         if (entry.target === this.resizeElement) {
-          this.resize.emit(entry);
+          this.ngZone.run(() => {
+            this.resize.emit(entry);
+          });
+
           break;
         }
       }
