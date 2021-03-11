@@ -2,6 +2,10 @@
 
 Unofficial fork of @swimlane/ngx-datatable with bugfixes and some extra features.
 
+## 20.0.1 - 2021-03-11
+
+- Fix: resize-observer now observers directly the ngx-datatable component to correctly detect also all vertical size changes
+
 ## 20.0.0 - 2021-02-10
 
 - Breaking: Upgrade to Angular 11

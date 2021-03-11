@@ -1184,7 +1184,7 @@ export class DatatableComponent implements OnInit, OnChanges, DoCheck, AfterView
     this.treeAction.emit({ row, rowIndex });
   }
 
-  @throttleable(5)
+  @throttleable(50)
   onResize(_event: ResizeObserverEntry) {
     this.recalculate();
   }

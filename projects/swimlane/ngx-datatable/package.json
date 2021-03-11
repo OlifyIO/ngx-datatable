@@ -1,6 +1,6 @@
 {
   "name": "@olifyio/ngx-datatable",
-  "version": "20.0.0",
+  "version": "20.0.1",
   "description": "Fork of ngx-datatable - an Angular table grid component for presenting large and complex data.",
   "peerDependencies": {
     "@angular/common": "^11.0.2",
