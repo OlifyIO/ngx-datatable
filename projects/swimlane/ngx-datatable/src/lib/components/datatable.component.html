@@ -27,6 +27,9 @@
   >
   </datatable-header>
   <datatable-body
+    resizeObserver
+    [resizeObserverEnabled]="true"
+    (resize)="onResize($event)"
     [groupRowsBy]="groupRowsBy"
     [groupedRows]="groupedRows"
     [rows]="_internalRows"
