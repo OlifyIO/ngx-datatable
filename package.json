@@ -12,7 +12,7 @@
     "test:unit": "ng test @olifyio/ngx-datatable --watch=false",
     "test:watch": "ng test @olifyio/ngx-datatable",
     "test:ci": "ng test @olifyio/ngx-datatable --watch=false --progress=false",
-    "ci": "run-s lint prettier:ci test:ci",
+    "ci": "run-s lint prettier:ci",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "prettier": "prettier --write \"{src,projects}/*.{js,ts,html,scss,css,md,json}\"",
@@ -25,10 +25,10 @@
     "publish:lib": "npm publish ./dist/swimlane/ngx-datatable",
     "prepack": "npm run package",
     "pack": "npm pack ./dist/swimlane/ngx-datatable/",
-    "publish": "run-s publish:lib deploy-docs",
+    "publish": "run-s publish:lib",
     "prepublishOnly": "echo \"This is the workspace -- you probably meant run 'npm run publish'.\" && exit 1"
   },
-  "private": true,
+  "private": false,
   "dependencies": {
     "@angular/animations": "~11.0.2",
     "@angular/common": "~11.0.2",

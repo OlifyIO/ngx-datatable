@@ -2,6 +2,14 @@
 
 Unofficial fork of @swimlane/ngx-datatable with bugfixes and some extra features.
 
+## 20.0.3 - 2021-10-05
+
+- Fix: recalculation of column widths in force mode when table width is 0
+
+## 20.0.2 - 2021-03-11
+
+- Fix: resize-observer to not receive pointer events, observe resizes on the body as well (scrollbars may appear)
+
 ## 20.0.1 - 2021-03-11
 
 - Fix: resize-observer now observers directly the ngx-datatable component to correctly detect also all vertical size changes

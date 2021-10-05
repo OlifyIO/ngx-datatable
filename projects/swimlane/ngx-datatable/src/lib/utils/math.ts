@@ -110,6 +110,10 @@ export function forceFillColumnWidths(
   startIdx: number,
   defaultColWidth: number = 300
 ): TableColumn[] {
+  if (expectedWidth === 0) {
+    return allColumns;
+  }
+
   const columnsIdxToResize = allColumns
     .map((c, i) => ({ c, i }))
     .slice(startIdx + 1, allColumns.length)
