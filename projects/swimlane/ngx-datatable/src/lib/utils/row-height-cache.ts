@@ -108,7 +108,7 @@ export class RowHeightCache {
    */
   query(atIndex: number): number {
     if (!this.treeArray.length) {
-      throw new Error(`query at index ${atIndex} failed: Fenwick tree array not initialized.`);
+      return undefined;
     }
 
     let sum = 0;
@@ -126,6 +126,10 @@ export class RowHeightCache {
    * Find the total height between 2 row indexes
    */
   queryBetween(atIndexA: number, atIndexB: number): number {
+    if (!this.treeArray.length) {
+      return undefined;
+    }
+
     return this.query(atIndexB) - this.query(atIndexA - 1);
   }
 

@@ -74,7 +74,6 @@ export class DataTableHeaderComponent implements OnDestroy {
   @Input() sortDescendingIcon: any;
   @Input() sortUnsetIcon: any;
   @Input() scrollbarH: boolean;
-  @Input() dealsWithGroup: boolean;
   @Input() targetMarkerTemplate: any;
 
   targetMarkerContext: any = null;

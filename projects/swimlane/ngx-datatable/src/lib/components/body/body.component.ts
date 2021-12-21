@@ -124,6 +124,8 @@ import { ScrollerComponent } from './scroller.component';
   }
 })
 export class DataTableBodyComponent implements OnInit, OnDestroy {
+  private _groupedRows: any;
+
   @Input() scrollbarV: boolean;
   @Input() scrollbarH: boolean;
   @Input() loadingIndicator: boolean;
@@ -141,7 +143,6 @@ export class DataTableBodyComponent implements OnInit, OnDestroy {
   @Input() displayCheck: any;
   @Input() trackByProp: string;
   @Input() rowClass: any;
-  @Input() groupedRows: any;
   @Input() groupExpansionDefault: boolean;
   @Input() innerWidth: number;
   @Input() groupRowsBy: string;
@@ -149,6 +150,21 @@ export class DataTableBodyComponent implements OnInit, OnDestroy {
   @Input() summaryRow: boolean;
   @Input() summaryPosition: string;
   @Input() summaryHeight: number;
+
+  get groupedRows(): any {
+    return this._groupedRows;
+  }
+
+  @Input() set groupedRows(value: any) {
+    if (this.groupedRows !== value) {
+      const changedHasGroups = !!this.groupedRows !== !!value;
+      this._groupedRows = value;
+
+      if (changedHasGroups) {
+        this.recalcLayout();
+      }
+    }
+  }
 
   @Input() set pageSize(val: number) {
     this._pageSize = val;
@@ -769,7 +785,7 @@ export class DataTableBodyComponent implements OnInit, OnDestroy {
    * Returns if the row was expanded and set default row expansion when row expansion is empty
    */
   getRowExpanded(row: any): boolean {
-    if (this.rowExpansions.length === 0 && this.groupExpansionDefault) {
+    if (this.rowExpansions.length === 0 && this.groupExpansionDefault && this.groupedRows) {
       for (const group of this.groupedRows) {
         this.rowExpansions.push(group);
       }

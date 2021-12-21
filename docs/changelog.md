@@ -2,6 +2,10 @@
 
 Unofficial fork of @swimlane/ngx-datatable with bugfixes and some extra features.
 
+## 20.0.4 - 2021-12-21
+
+- Fix: once enabled groupRowsBy, it is impossible disable it again
+
 ## 20.0.3 - 2021-10-05
 
 - Fix: recalculation of column widths in force mode when table width is 0
