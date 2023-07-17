@@ -10,21 +10,30 @@
     "module": "es2020",
     "moduleResolution": "node",
     "importHelpers": true,
-    "target": "es2015",
-    "typeRoots": ["node_modules/@types"],
-    "lib": ["es2018", "dom"],
+    "target": "ES2022",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2018",
+      "dom"
+    ],
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "paths": {
-      "@swimlane/ngx-datatable": ["dist/swimlane/ngx-datatable"],
-      "@swimlane/ngx-datatable/*": ["dist/swimlane/ngx-datatable/*"]
-    }
+      "@swimlane/ngx-datatable": [
+        "dist/swimlane/ngx-datatable"
+      ],
+      "@swimlane/ngx-datatable/*": [
+        "dist/swimlane/ngx-datatable/*"
+      ]
+    },
+    "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true,
-    "strictTemplates": true,
-    "enableIvy": true
+    "strictTemplates": true
   }
 }

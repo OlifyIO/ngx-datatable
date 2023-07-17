@@ -2,6 +2,10 @@
 
 Unofficial fork of @swimlane/ngx-datatable with bugfixes and some extra features.
 
+## 20.1.0 - 2023-07-17
+
+- Upgraded to Angular 16
+
 ## 20.0.4 - 2021-12-21
 
 - Fix: once enabled groupRowsBy, it is impossible disable it again
