@@ -2,6 +2,10 @@
 
 Unofficial fork of @swimlane/ngx-datatable with bugfixes and some extra features.
 
+## 20.1.1 - 2023-07-18
+
+- Fixed peerDependencies
+
 ## 20.1.0 - 2023-07-17
 
 - Upgraded to Angular 16

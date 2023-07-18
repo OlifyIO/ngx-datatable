@@ -1,16 +1,16 @@
 {
   "name": "@olifyio/ngx-datatable",
-  "version": "20.1.0",
+  "version": "20.1.1",
   "description": "Fork of ngx-datatable - an Angular table grid component for presenting large and complex data.",
   "peerDependencies": {
-    "@angular/common": "^11.0.2",
-    "@angular/core": "^11.0.2",
-    "@angular/platform-browser": "^11.0.2",
+    "@angular/common": "^16.0.0",
+    "@angular/core": "^16.0.0",
+    "@angular/platform-browser": "^16.0.0",
     "@juggle/resize-observer": "^3.2.0",
-    "rxjs": "^6.6.3"
+    "rxjs": "^7.8.1"
   },
   "dependencies": {
-    "tslib": "^2.0.0",
+    "tslib": "^2.6.0",
     "@juggle/resize-observer": "^3.2.0"
   },
   "repository": {
