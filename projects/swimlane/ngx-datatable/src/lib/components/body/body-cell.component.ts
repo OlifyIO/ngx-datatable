@@ -53,7 +53,9 @@ export type TreeStatus = 'collapsed' | 'expanded' | 'loading' | 'disabled';
         </ng-template>
       </ng-container>
 
-      <span *ngIf="!column.cellTemplate" [title]="sanitizedValue" [innerHTML]="value"> </span>
+      <span *ngIf="!column.cellTemplate" [title]="value">
+        {{value}}
+      </span>
       <ng-template
         #cellTemplate
         *ngIf="column.cellTemplate"
@@ -240,7 +242,6 @@ export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
     return height + 'px';
   }
 
-  sanitizedValue: any;
   value: any;
   sortDir: SortDirection;
   isFocused = false;
@@ -307,7 +308,6 @@ export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
     if (this.value !== value) {
       this.value = value;
       this.cellContext.value = value;
-      this.sanitizedValue = value !== null && value !== undefined ? this.stripHtml(value) : value;
       this.cd.markForCheck();
     }
   }
@@ -405,13 +405,6 @@ export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
     if (sort) {
       return sort.dir;
     }
-  }
-
-  stripHtml(html: string): string {
-    if (!html.replace) {
-      return html;
-    }
-    return html.replace(/<\/?[^>]+(>|$)/g, '');
   }
 
   onTreeAction() {

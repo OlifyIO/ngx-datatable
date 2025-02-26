@@ -2,6 +2,14 @@
 
 Unofficial fork of @swimlane/ngx-datatable with bugfixes and some extra features.
 
+## 20.1.4 - 2025-02-26
+
+- Fix: allow only non-HTML content in body cell when not specifying custom template (i.e. always escape content)
+
+## 20.1.3 - 2024-05-16
+
+- Fixed CSS property support testing
+
 ## 20.1.1 - 2023-07-18
 
 - Fixed peerDependencies

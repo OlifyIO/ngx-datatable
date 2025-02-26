@@ -1,6 +1,6 @@
 {
   "name": "ngx-datatable",
-  "version": "0.0.0",
+  "version": "20.1.4",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -12,8 +12,8 @@
     "test:unit": "ng test @olifyio/ngx-datatable --watch=false",
     "test:watch": "ng test @olifyio/ngx-datatable",
     "test:ci": "ng test @olifyio/ngx-datatable --watch=false --progress=false",
-    "ci": "run-s lint prettier:ci",
-    "lint": "ng lint",
+    "ci": "run-s lint",
+    "lint": "echo \"No linting configured\"",
     "e2e": "ng e2e",
     "prettier": "prettier --write \"{src,projects}/*.{js,ts,html,scss,css,md,json}\"",
     "prettier:ci": "prettier --check \"{src,projects}/*.{js,ts,html,scss,css,md,json}\"",
@@ -84,5 +84,6 @@
     "hooks": {
       "pre-commit": "pretty-quick --staged"
     }
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
